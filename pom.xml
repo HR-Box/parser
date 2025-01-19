@@ -9,8 +9,8 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ma.assalielmehdi.hrbox</groupId>
-    <artifactId>resume-parser</artifactId>
-    <version>1.0.o</version>
+    <artifactId>resume-service</artifactId>
+    <version>1.0.0</version>
     <name>resume-parser</name>
 
     <properties>

@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 @Service
-public class OCR {
+public class OCRService {
   public String imagesToText(BufferedImage[] images) {
     var tesseract = new Tesseract1();
     tesseract.setDatapath("tessdata");

@@ -23,6 +23,15 @@ spring:
   threads:
     virtual:
       enabled: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
 
 eureka:
   client:
@@ -38,7 +47,3 @@ minio:
 
 resume:
   bucket: ${RESUME_BUCKET:resume}
-
-ocr:
-  service:
-    name: resume-ocr

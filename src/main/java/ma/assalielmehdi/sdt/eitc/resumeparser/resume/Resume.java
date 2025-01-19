@@ -5,9 +5,8 @@ import jakarta.persistence.*;
 @Entity
 public class Resume {
   public enum State {
-    WAITING,
-    OCR_IN_PROGRESS, OCR_FAILED,
-    PARSE_IN_PROGRESS, PARSE_FAILED,
+    IN_PROGRESS,
+    OCR_FAILED, PARSE_FAILED,
     DONE
   }
 
