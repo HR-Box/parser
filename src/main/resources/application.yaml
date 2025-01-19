@@ -13,6 +13,13 @@ spring:
       ddl-auto: update
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+  ai:
+    ollama:
+      base-url: ${OLLAMA_URL:http://localhost:11434}
+      init:
+        pull-model-strategy: when_missing
+      chat:
+        model: llama3.2
   threads:
     virtual:
       enabled: true
