@@ -1,55 +1,52 @@
 package ma.assalielmehdi.sdt.eitc.resumeparser.ocr;
 
-import com.netflix.discovery.EurekaClient;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import net.sourceforge.tess4j.Tesseract1;
+import net.sourceforge.tess4j.TesseractException;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Random;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 @Service
 public class OCR {
-  private final EurekaClient eurekaClient;
-  private final String serviceName;
+  public String imagesToText(BufferedImage[] images) {
+    var tesseract = new Tesseract1();
+    tesseract.setDatapath("tessdata");
 
-  public OCR(EurekaClient eurekaClient, @Value("${ocr.service.name}") String serviceName) {
-    this.eurekaClient = eurekaClient;
-    this.serviceName = serviceName;
-  }
+    try {
+      var text = new StringBuilder();
 
-  private String getInstanceUrl() {
-    var instances = eurekaClient.getApplication(serviceName).getInstances();
-    var randomInstance = instances.get(new Random().nextInt(instances.size()));
+      for (var image : images) {
+        var imageText = tesseract.doOCR(image);
+        text.append(imageText).append("\n");
+      }
 
-    return "http://" + randomInstance.getHostName() + ":" + randomInstance.getPort();
+      return text.toString();
+    } catch (TesseractException e) {
+      throw new OCRException("OCR Error: " + e.getMessage());
+    }
   }
 
   public String pdfToText(byte[] pdfBytes) {
-    try {
-      var restTemplate = new RestTemplate();
+    var pdfImages = pdfToImages(pdfBytes);
+    return imagesToText(pdfImages);
+  }
 
-      var headers = new HttpHeaders();
-      headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+  private BufferedImage[] pdfToImages(byte[] pdfBytes) {
+    try (var document = Loader.loadPDF(pdfBytes)) {
+      var pdfRenderer = new PDFRenderer(document);
+      var images = new BufferedImage[document.getNumberOfPages()];
 
-      var body = new ByteArrayResource(pdfBytes);
-
-      var request = new HttpEntity<>(body, headers);
-
-      var url = getInstanceUrl() + "/api/v1/ocr/pdf";
-      var response = restTemplate.postForEntity(url, request, String.class);
-
-      if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
-        throw new OCRException("OCR Error: Empty response");
+      for (int page = 0; page < document.getNumberOfPages(); ++page) {
+        images[page] = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
       }
 
-      return response.getBody();
-    } catch (RestClientException e) {
-      throw new OCRException("OCR Error: " + e.getMessage() );
+      return images;
+    } catch (IOException e) {
+      throw new OCRException("OCR Error: " + e.getMessage());
     }
   }
 }

@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ma.assalielmehdi.hrbox</groupId>
-    <artifactId>parser</artifactId>
+    <artifactId>resume-parser</artifactId>
     <version>1.0.o</version>
-    <name>parser</name>
+    <name>resume-parser</name>
 
     <properties>
         <java.version>23</java.version>
@@ -55,6 +55,16 @@
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
             <version>8.5.16</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>5.13.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.3</version>
         </dependency>
 
         <dependency>
