@@ -30,4 +30,9 @@ RUN git clone https://github.com/tesseract-ocr/tessdata.git
 
 COPY --from=build /app/target/resume-service*.jar ./app.jar
 
+RUN apt-get install -y netcat
+
+COPY wait-for.sh ./wait-for.sh
+RUN chmod +x ./wait-for.sh
+
 CMD ["java", "-jar", "app.jar"]
